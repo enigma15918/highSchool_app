@@ -21,7 +21,6 @@ st.write("I am here to help you break down complex topics and present the simple
 if st.button("✚ New Session"):
 
     new_conv=Conversation(user_id=current_user_id,title="Logic & Simplify",)
-    db.add(Conversation)
     db.add(new_conv)
     db.commit()
     st.rerun()
@@ -41,7 +40,7 @@ if conv_options:
 
     st.divider()
 
-    messages=db.query(Message).filter(Message.conversation_id==selected_conv_id).all()
+    messages=db.query(Message).filter(Message.Conversation_id==selected_conv_id).all()
 
     langchain_messages=[]
 
@@ -73,3 +72,33 @@ if conv_options:
             st.write(user_input)
 
         new_user_msg=Message(Conversation_id=selected_conv_id,role="user",msg_type="text",content=user_input)
+
+        db.add(new_user_msg)
+
+        db.commit()
+
+        langchain_messages.append(HumanMessage(content=user_input))
+
+        # add the part of AI below
+
+        API=""
+
+        llm=ChatOpenAI(
+            model="openai/o3-mini-high",
+            api_key=API,
+            base_url="https://ai.hackclub.com/proxy/v1"
+        )
+        with st.spinner("Wait ..."):
+            response=llm.invoke(langchain_messages)
+
+            final_content=response.content
+
+        with st.chat_message("assistant"):
+            st.write(final_content)
+
+        new_ai_msg=Message(Conversation_id=selected_conv_id,role="assistant",msg_type="text",content=final_content)
+        db.add(new_ai_msg)
+
+        db.commit()
+else:
+    st.info("No past session click on new session to start your journey")
