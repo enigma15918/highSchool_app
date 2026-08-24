@@ -50,13 +50,16 @@ if st.session_state["user_id"] is None:
             db.commit()
 
             st.success("Successfully Created")
-            st.rerun()
+            # st.rerun()
 
         else:
             st.warning("Please Enter the Pass , Username ")
 
 else:
+
+    
     st.title("Welcome your account")
-    if st.button("Logout"):
+    st.write("Use side bar to start study")
+    if st.button("Logout",type="primary"):
         st.session_state["user_id"]=None
         st.rerun()            
