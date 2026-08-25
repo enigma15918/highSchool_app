@@ -6,6 +6,7 @@ import os
 
 if "user_id" not in st.session_state or st.session_state["user_id"] is None:
     st.warning("You must go to signIn/SignUp")
+    st.stop()
 
 db=SessionLocal()
 
@@ -48,16 +49,17 @@ if conv_options:
             st.write(msg.content)
 
     user_input=st.chat_input("Enter your question here")
-    user_input=HumanMessage(content=user_input)
+    user_data=user_input
 
     if user_input:
+        user_input=HumanMessage(content=user_input)
         with st.chat_message("user"):
-            st.write(user_input)
+            st.write(user_data)
         new_user_msg=Message(
             Conversation_id=selected_conv_id,
             role="user",
             msg_type="text",
-            content=user_input
+            content=user_data
         )
 
         db.add(new_user_msg)
@@ -103,7 +105,7 @@ You are an Elite STEM Polymath and Advanced Academic Tutor specializing in Mathe
 Tone: Unapologetically brilliant, highly structured, authoritative yet encouraging. Eliminate conversational filler.
 
 """)
-        invoking=llm.invoke([user_input,system_message])
+        invoking=llm.invoke([system_message,user_input])
         ai_response=invoking.content
 
         with st.chat_message("assistant"):

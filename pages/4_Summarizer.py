@@ -30,10 +30,10 @@ st.write("Upload your file as pdf, text files or copy text")
 
 tab1,tab2=st.tabs(["Upload File(PDF,TXT)","Paste Direct Text"])
 
-input_text=""
-uploaded_file=st.file_uploader("Upload PDF or TXT reference",type=["pdf","txt"])
+
 with tab1:
-    
+    uploaded_file=st.file_uploader("Upload PDF or TXT reference",type=["pdf","txt"])
+    input_text=""
 
     if uploaded_file is not None:
         st.session_state["file_uploaded"]=uploaded_file
@@ -62,6 +62,7 @@ with tab2:
 
     if pasted_text.strip():
         st.session_state["input_text"]=pasted_text
+        st.session_state["file_uploaded"] = None
 
 st.divider()
 
@@ -85,7 +86,7 @@ with col2:
 if st.button("Generate Summary ",type="primary"):
     user_input= st.session_state.get("input_text")
 
-    if not user_input or  not user_input.strip():
+    if not user_input or  not str(user_input).strip():
         st.warning("Please upload file ot paste the text")
     else:
 
@@ -114,9 +115,7 @@ if st.button("Generate Summary ",type="primary"):
             )
 
             user_msg=HumanMessage(
-                content=f""""
-                    Source text :\n {user_input[:50000]}
-                """
+                content=f"Source text :\n {user_input[:50000]}"
             )
 
             response=llm.invoke([system_prompt,user_msg])
