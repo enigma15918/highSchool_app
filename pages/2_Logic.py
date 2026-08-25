@@ -135,7 +135,7 @@ Tone: Unapologetically brilliant, highly structured, authoritative yet encouragi
 
         # system_message=SystemMessage(content="")
         with st.spinner("Wait ..."):
-            response=llm.invoke([langchain_messages])
+            response=llm.invoke(langchain_messages)
 
             final_content=response.content
 

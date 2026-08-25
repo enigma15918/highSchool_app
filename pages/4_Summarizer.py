@@ -8,6 +8,13 @@ from langchain_openai import ChatOpenAI
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
+if "file_uploaded" not in st.session_state:
+    st.session_state["file_uploaded"]=None
+
+if "input_text" not in st.session_state:
+    st.session_state["input_text"]=None
+
+
 if "user_id" not in st.session_state or st.session_state["user_id"] is None:
 
     st.warning("You must go back and sign in")
@@ -29,8 +36,9 @@ with tab1:
     uploaded_file=st.file_uploader("Upload PDF or TXT reference",type=["pdf","txt"])
 
     if uploaded_file is not None:
+        st.session_state["file_uploaded"]=uploaded_file
 
-        if uploaded_file.name.endswith(".pdf"):
+        if st.session_state["file_uploaded"].name.endswith(".pdf"):
 
             pdf_reader=PdfReader(uploaded_file)
 
@@ -41,15 +49,19 @@ with tab1:
                 if extracted:
                     input_text+=extracted+ "\n"
 
+            st.session_state["input_text"]=input_text
+
         elif uploaded_file.name.endswith(".txt"):
             input_text=uploaded_file.read().decode("utf-8")
+            st.session_state["input_text"]=input_text
+
 
 with tab2:
 
     pasted_text=st.text_area("Paste reference text")
 
     if pasted_text.strip():
-        input_text=pasted_text
+        st.session_state["input_text"]=pasted_text
 
 st.divider()
 
@@ -71,8 +83,9 @@ with col2:
     )
 
 if st.button("Generate Summary ",type="primary"):
+    user_input= st.session_state.get("input_text")
 
-    if not input_text.strip():
+    if not user_input or  not user_input.strip():
         st.warning("Please upload file ot paste the text")
     else:
 
@@ -102,7 +115,7 @@ if st.button("Generate Summary ",type="primary"):
 
             user_msg=HumanMessage(
                 content=f""""
-                    Source text :\n {input_text[:50000]}
+                    Source text :\n {user_input[:50000]}
                 """
             )
 
