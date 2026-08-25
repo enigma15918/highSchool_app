@@ -66,10 +66,10 @@ if submitted:
     else:
 
         with st.spinner("it is generating"):
-            API=""
-
+            # API=""
+            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
             llm=ChatOpenAI(
-                api_key=API,
+                # api_key=API,
                 model="anthropic/claude-sonnet-5",
                 base_url="https://ai.hackclub.com/proxy/v1"
             )

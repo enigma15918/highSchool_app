@@ -78,10 +78,10 @@ if st.button("Generate Summary ",type="primary"):
 
         with st.spinner("It is creating ..."):
 
-            API=""
-
+            # API=""
+            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
             llm=ChatOpenAI(
-                api_key=API,
+                # api_key=API,
                 model="google/gemini-2.5-pro",
                 base_url="https://ai.hackclub.com/proxy/v1"
             )

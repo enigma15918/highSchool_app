@@ -34,13 +34,20 @@ if st.session_state["user_id"] is None:
                 st.success("Successfully login")
                 st.rerun()
             else:
-                st.error("Wrong Username or Password")
+                st.error("Wrong Username or Password or Go to sign Up")
 
     with tab2:
         st.subheader("Create new account")
 
-        new_user=st.text_input("User name",key="new user")
-        new_pass=st.text_input("Password",key="new pass",type="password")
+        new_user=st.text_input("User name",key="new user",max_chars=50,)
+        new_pass=st.text_input("Password",key="new pass",type="password",max_chars=50)
+
+        if len(new_user.strip())<5 or len(new_pass.strip())<8:
+            st.warning("please your username must be more than or 5 chars and password 8 or more " )
+            st.stop()
+        if db.query(User).filter(User.username==new_user).first():
+            st.warning("please choose another username this was used before !!!")
+            st.stop()
 
         if st.button("Create",type="primary"):
             hash_pw=bcrypt.hashpw(new_pass.encode("utf-8"),bcrypt.gensalt()).decode("utf-8")
@@ -49,7 +56,7 @@ if st.session_state["user_id"] is None:
             db.add(new_account)
             db.commit()
 
-            st.success("Successfully Created")
+            st.success("Successfully Created & GoBack to signIn")
             # st.rerun()
 
         else:
