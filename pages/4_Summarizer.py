@@ -31,9 +31,9 @@ st.write("Upload your file as pdf, text files or copy text")
 tab1,tab2=st.tabs(["Upload File(PDF,TXT)","Paste Direct Text"])
 
 input_text=""
-
+uploaded_file=st.file_uploader("Upload PDF or TXT reference",type=["pdf","txt"])
 with tab1:
-    uploaded_file=st.file_uploader("Upload PDF or TXT reference",type=["pdf","txt"])
+    
 
     if uploaded_file is not None:
         st.session_state["file_uploaded"]=uploaded_file
