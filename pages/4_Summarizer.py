@@ -81,19 +81,28 @@ if st.button("Generate Summary ",type="primary"):
             API=""
 
             llm=ChatOpenAI(
-                model="",
+                api_key=API,
+                model="google/gemini-2.5-pro",
                 base_url="https://ai.hackclub.com/proxy/v1"
             )
 
             system_prompt=SystemMessage(
-                content=f"""
+                content=
+            f"""You are an expert educational designer and front-end creator.
+                Create a standalone HTML summary document based on the input text.
+                Style choice: {summary_type}. Visual theme: {theme_choice}.
+                
+                HTML Requirements:
+                1. Use embedded modern CSS (responsive cards, clean fonts, badge highlights for key terms, callout boxes).
+                2. Structure into clear sections (Overview, Core Concepts, Key Takeaways).
+                3. Add visual hierarchy (colored sidebars, clean margins, high contrast).
+                4. Output ONLY standard valid raw HTML code without markdown code fences (no ```html ... ```)."""
 
-"""
             )
 
             user_msg=HumanMessage(
                 content=f""""
-                
+                    Source text :\n {input_text[:50000]}
                 """
             )
 
@@ -116,6 +125,6 @@ if st.session_state["summary_html"]:
     st.download_button(
         "Download the file",
         data=st.session_state["summary_html"],
-        file_name=file_name,
+        file_name=file_name+".html",
         mime="text/html"
     )

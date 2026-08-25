@@ -4,9 +4,13 @@ from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage, SystemMessage 
 from models import SessionLocal
+from pypdf import PdfReader
 if "user_id" not in st.session_state or st.session_state["user_id"] is None:
     st.warning("You must login !!!")
     st.stop()
+
+if "slides_content" not in st.session_state:
+    st.session_state["slides_content"]=None
 
 db=SessionLocal()
 
@@ -16,17 +20,36 @@ st.title("Presentation and Slides generator ")
 
 st.write("Transform your study to be visualized and organized")
 
+input_option=st.selectbox("Choose the type of content",options=["PDF","Text"],)
 with st.form("slides-form"):
 
-    topic_input=st.text_area(
-        "Enter the topic, text or main point of your slides will be",
-        placeholder="e.g. Explain what is the transistors"
-    )
+    
+    
+    if input_option == "Text":
+        topic_input=st.text_area(
+            "Enter the topic, text or main point of your slides will be",
+            placeholder="e.g. Explain what is the transistors"
+        )
+    else:
+        file_uploaded=st.file_uploader("Upload your file here",type="pdf")
+        prompt_file=st.text_input("Add what you want to do with file")
+        if file_uploaded:
+
+            topic_input=""
+            reader=PdfReader(file_uploaded)
+
+            for page in reader.pages:
+                topic_input+=page.extract_text()+"\n"
+
+            topic_input+=f"\n {prompt_file}"
+
+
+
 
     col1,col2=st.columns(2)
 
     with col1:
-        num_slides=st.slider("Number of slides",min_value=3, max_value=16,value=5)
+        num_slides=st.slider("Number of slides",min_value=1, max_value=60,value=5)
 
     with col2:
         target_audience=st.selectbox("Target Audience:", 
@@ -73,20 +96,23 @@ if submitted:
 
             response=llm.invoke([system_prompt,user_msg])
 
-            html_content=response.content.replace("```html", "").replace("```", "").strip()
+            st.session_state["slides_content"]=response.content.replace("```html", "").replace("```", "").strip()
+            # html_content=st.session_state["slides_content"]
+if st.session_state["slides_content"]:
+    
+    
+    st.success("Slides generated successfully")
 
-            st.success("Slides generated successfully")
+    st.divider()
 
-            st.divider()
+    st.components.v1.html(st.session_state["slides_content"], height=650, scrolling=True)
 
-            st.components.v1.html(html_content, height=650, scrolling=True)
+    st.divider()
 
-            st.divider()
-
-
-            st.download_button(
-                label="Download html file",
-                data=html_content,
-                file_name="presentation.html",
-                mime="text/html"
-            )
+    file_name=st.text_input("enter the name of the file",value="presentation")
+    st.download_button(
+        label="Download html file",
+        data=st.session_state["slides_content"],
+        file_name=file_name+".html",
+        mime="text/html"
+    )
