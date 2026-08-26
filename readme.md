@@ -64,3 +64,6 @@
 ### AI decleration
 - I have used just AI in generating good system prompts for Large language model and help me to give me the commands of deploy that project on nest
 - And last 20 mins coding the ai helped me to solve some errors
+
+## Power Builded in API (AI models of hack club)
+- I have used that to improve my studies ways by using AI which i have built it and control memory and everything by myself
