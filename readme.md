@@ -61,3 +61,6 @@
 
 - iam in my last year in high school and i wanted to get the most effecient so i used free API models of hackclub to do this project to help me generate best slides and explanation for me 
 
+### AI decleration
+- I have used just AI in generating good system prompts for Large language model and help me to give me the commands of deploy that project on nest
+- And last 20 mins coding the ai helped me to solve some errors
